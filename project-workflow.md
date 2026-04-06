@@ -11,7 +11,7 @@ A type-safe, full-stack Notes Manager using React, Express, Mongoose, and TypeSc
 - `mkdir server && cd server`
 - `npm init -y`
 - `npm i express mongoose cors dotenv`
-- `npm install -D typescript ts-node @types/node @types/express nodemon`
+- `npm install -D typescript ts-node @types/node @types/express @types/cors nodemon`
 - Initialize TS: `npx tsc --init`
 
 3. Frontend:

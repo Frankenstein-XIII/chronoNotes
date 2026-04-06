@@ -32,3 +32,4 @@ const noteSchema = new Schema<INote>({
     timestamps: true
 }
 )
+export const Note = model<INote> ('Note', noteSchema)
