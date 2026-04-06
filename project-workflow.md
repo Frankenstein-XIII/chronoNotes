@@ -19,7 +19,7 @@ A type-safe, full-stack Notes Manager using React, Express, Mongoose, and TypeSc
 - `cd .. && npm create vite@latest client -- --template react-ts`
 - ` && cd client && npm i axios`
 
-## Phase 1: The Blueprint (Schema & Type System)
+## Phase 1: The Blueprint (Schema & Type System) ✅
 
 1. What? Define the "Source of Truth" for what a Note looks like.
 2. Why? TypeScript ensures that the frontend doesn't send "text" when the backend expects "content," preventing runtime crashes.
@@ -28,7 +28,7 @@ A type-safe, full-stack Notes Manager using React, Express, Mongoose, and TypeSc
    - interface INote { title: string; content: string; createdAt: Date; }
    - const NoteSchema = new Schema<INote>({ ... });
 
-## Phase 2: The Gateway (Create & Read)
+## Phase 2: The Gateway (Create & Read) ✅
 
 1. What? Build the API endpoints to save a note to MongoDB and fetch the list.
 2. Why? This is the "Minimum Viable Product." Without saving and viewing, the app has no utility.
@@ -50,7 +50,7 @@ A type-safe, full-stack Notes Manager using React, Express, Mongoose, and TypeSc
    - DELETE /api/notes/:id → Note.findByIdAndDelete(id)
    - PATCH /api/notes/:id → Note.findByIdAndUpdate(id, req.body)
 
-## Phase 4: The Archive (Filtering & Search)
+## Phase 4: The Archive (Filtering & Search)  ✅
 
 1. What? A search bar to filter notes by title or content in real-time.
 2. Why? As the database grows, finding a specific note by scrolling becomes impossible.
@@ -60,7 +60,7 @@ A type-safe, full-stack Notes Manager using React, Express, Mongoose, and TypeSc
 4. Symbolic Annotation:
    - const filtered = notes.filter(note => note.title.toLowerCase().includes(query))
 
-## Phase 5: The Priority (Pinning Feature)
+## Phase 5: The Priority (Pinning Feature) 
 
 1. What? A "Pin" toggle to keep specific notes at the top of the list.
 2. Why? It adds a layer of organization and moves the project beyond "Basic CRUD."

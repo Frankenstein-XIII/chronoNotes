@@ -17,6 +17,7 @@ export interface INote extends Document{
     body: string;
     status: 'active' | 'in-progress'|'completed';
     summary: string;
+    isPinned: boolean;
     ceatedAt: Date;
     updatedAt: Date;
 }
@@ -28,6 +29,7 @@ const noteSchema = new Schema<INote>({
     body: {type:String, required: true},
     status:{ type: String,  enum: ['active', 'in-progress', 'completed'], default: 'active' },
     summary: {type: String, required: true},
+    isPinned: {type: Boolean, default:false}
 },{
     timestamps: true
 }

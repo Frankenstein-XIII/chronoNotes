@@ -1,121 +1,90 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState, useEffect, useCallback } from "react";
+import axios from "axios";
+import {INote} from './types/note';
+import { NoteCard } from "./components/NoteCard";
+import { NoteForm } from "./components/NoteForm";
 
-function App() {
-  const [count, setCount] = useState(0)
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+
+
+function App(){
+    const [notes, setNotes] = useState<INote[]>([]);
+    const [search, setSearch] = useState('');
+    const [selectTag, setSelectTag] = useState('');
+
+    //the fetch logic: now handles search and tag 
+    const fetchNotes =useCallback( async () =>{
+        try{
+            const response = await axios.get('/api/notes', {
+                params: {search, tag: selectTag}
+            });
+            setNotes(response.data);
+        }
+        catch(error){
+            console.error("Error fetching notes", error);
+        }
+    },[search, selectTag]);
+
+    useEffect(() =>{
+        const delayDebounceFn = setTimeout(()=>{
+            fetchNotes();
+        }, 300);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [fetchNotes]);
+
+    const handleTogglePin = async(note:INote) =>{
+        try{
+            //1. send the flip to the backend 
+            await axios.patch(`/api/notes/${note._id}`,{
+                isPinned: !note.isPinned,
+            });
+
+            // 2. optimistic UI updates: Refresh the list to see the new sort order
+            fetchNotes();
+        }catch(error){
+            console.error("Error toglling pin:", error);
+        }
+    };
+
+    const handleDelete = async(id: string) =>{
+        if(globalThis.confirm("Are you sure, you want to delete this note?")){
+            try{
+                await axios.delete(`/api/notes/${id}`);
+                fetchNotes();
+            }
+            catch(error){
+                console.error("Delete failed: ",error);
+            }
+        }
+    }
+
+    
+
+    return (
+        <div className="app-wrapper">
+            <header>
+                <h1>The Chrono Notes</h1>
+                <NoteForm onSuccess={fetchNotes}/>
+                <div className="filter-bar">
+                    <input type="text" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                    <select value={selectTag} onChange={(e) =>setSelectTag(e.target.value)}>
+                        <option value=""> All Tags</option>
+                        <option value="Office Work"> Office Work</option>
+                        <option value="Home Work">Home Work</option>
+                        <option value="Personal">Personal</option>
+                    </select>
+                </div>
+            </header>
+            <main className="notes-grid">
+                {notes.length>0 ? (notes.map((note)=>(
+                    <NoteCard key={note._id} note={note} onTogglePin={handleTogglePin} onDelete={handleDelete} />
+                ))): (
+                    <p className="'empty"> No notes found!</p>
+                )}
+            </main>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+    );
 }
 
 export default App
