@@ -56,7 +56,13 @@ export const updateNote = async(req:Request, res: Response) =>{
     try{
         const {id} = req.params;
 
-        const {tag, status} = req.body;
+        const existingNote = await Note.findById(id);
+        if(!existingNote) return res.status(404).json({message: "Not Found"});
+
+        const tag = req.body.tag|| existingNote.tag;
+        const status = req.body.status|| existingNote.status;
+
+        // const {tag, status} = req.body;
         let updateData = {...req.body};
 
         if(tag|| status){

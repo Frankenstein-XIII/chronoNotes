@@ -34,7 +34,7 @@ export const NoteForm = ({onSuccess}: Props) =>{
             <select value={tag} onChange={(e) =>setTag(e.target.value)}>
                 <option value="Office Work">Office Work</option>
                 <option value="Home Work">Home Work</option>
-                <option value="Perosonal">Perosnal</option>
+                <option value="Personal">Personal</option>
             </select>
             <textarea placeholder="Take a note..." value={body} onChange={(e) => setBody(e.target.value)}></textarea>
                 <button type="submit">Add Note</button>

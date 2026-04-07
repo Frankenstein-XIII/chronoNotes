@@ -49,6 +49,7 @@ function App(){
 
     const handleDelete = async(id: string) =>{
         if(globalThis.confirm("Are you sure, you want to delete this note?")){
+            setNotes((prevNotes) => prevNotes.filter(note=> note._id!==id));
             try{
                 await axios.delete(`/api/notes/${id}`);
                 fetchNotes();
